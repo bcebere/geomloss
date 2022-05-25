@@ -4,18 +4,30 @@ from setuptools import setup, find_packages
 # To use a consistent encoding
 from codecs import open
 from os import path
+import re
 
 here = path.abspath(path.dirname(__file__))
+
+def read(fname: str) -> str:
+    return open(path.join(path.dirname(__file__), fname)).read()
+
+def find_version() -> str:
+    version_file = read("geomloss/version.py")
+    version_re = r"__version__ = \"(?P<version>.+)\""
+    version_raw = re.match(version_re, version_file)
+    if version_raw is None:
+        return "0.0.1"
+
+    version = version_raw.group("version")
+    return version
 
 # Get the long description from the README file
 with open(path.join(here, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
 
-import geomloss
-
 setup(
     name="geomloss",
-    version=geomloss.__version__,
+    version=find_version(),
     description="Geometric loss functions between point clouds, images and volumes.",
     long_description=long_description,
     long_description_content_type="text/markdown",
